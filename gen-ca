@@ -22,7 +22,7 @@ echo
 
 echo 'Generating CA cert key pair..'
 openssl req -x509 -days 3650 -newkey rsa:2048 -keyout "$SSL/ca.key" -out "$SSL/ca.crt" -subj "/CN=$cn/" 2>/dev/null \
-  && openssl x509 -noout -text -in "$SSL/ca.crt"
+  && openssl x509 -noout -text -in "$SSL/ca.crt" \
   || echo 'FAIL!'
 
 chmod 600 "$SSL"/*
