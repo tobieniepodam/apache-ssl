@@ -1,0 +1,28 @@
+#!/bin/bash
+
+WD=$(dirname $0)
+SSL="$WD/ssl"
+
+
+test -d "$SSL" || mkdir "$SSL"
+chmod 700 "$SSL"
+
+if test -f "$SSL/ca.key" -o -f "$SSL/ca.crt"; then
+  read -p "CA key/crt exist, continue [y/*]? " -n1 yn
+  echo
+  test "$yn" = 'y' || exit
+fi
+
+read -p 'Put CA Common Name: ' cn
+echo
+read -p "Continue with '$cn' Common Name [y/*]? " -n1 yn
+echo
+test "$yn" = 'y' || exit
+echo
+
+echo 'Generating CA cert key pair..'
+openssl req -x509 -days 3650 -newkey rsa:2048 -keyout "$SSL/ca.key" -out "$SSL/ca.crt" -subj "/CN=$cn/" 2>/dev/null \
+  && openssl x509 -noout -text -in "$SSL/ca.crt"
+  || echo 'FAIL!'
+
+chmod 600 "$SSL"/*
